@@ -9,4 +9,6 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
-CMD ["python", "main.py"]
+# اجرا با uvicorn تا main فقط یک‌بار به اسم "main" ایمپورت بشه (جلوگیری از circular import
+# بین main.py و relay_vless.py که با `python main.py` رخ می‌داد)
+CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 1"]
