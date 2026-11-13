@@ -119,7 +119,13 @@ SUBS: dict = {}
 SUBS_LOCK = asyncio.Lock()
 
 # پروتکل‌های پشتیبانی‌شده برای هر کانفیگ
-PROTOCOLS = ("vless-ws", "xhttp-packet-up", "xhttp-stream-up", "xhttp-stream-one")
+PROTOCOLS = (
+    "vless-ws", "xhttp-packet-up", "xhttp-stream-up", "xhttp-stream-one",
+    "trojan-ws",                                    # پایتونی (پشت TLS ریلوی/CDN)
+    "vless-reality", "vless-grpc-reality", "vless-xhttp-reality",
+    "trojan-reality", "vless-httpupgrade",          # توسط هسته‌ی Xray سرو می‌شن (xray_core.py)
+)
+XRAY_PROTOCOLS = ("vless-reality", "vless-grpc-reality", "vless-xhttp-reality", "trojan-reality", "vless-httpupgrade")
 DEFAULT_PROTOCOL = "vless-ws"
 
 # Fingerprint (uTLS) های قابل انتخاب برای هر کانفیگ
@@ -132,6 +138,12 @@ DEFAULT_ALPN_BY_PROTOCOL = {
     "xhttp-packet-up": "h2,http/1.1",
     "xhttp-stream-up": "h2,http/1.1",
     "xhttp-stream-one": "h2,http/1.1",
+    "trojan-ws": "http/1.1",
+    "vless-reality": "",
+    "vless-grpc-reality": "h2",
+    "vless-xhttp-reality": "h2",
+    "trojan-reality": "",
+    "vless-httpupgrade": "http/1.1",
 }
 DEFAULT_PORT = 443
 MIN_PORT, MAX_PORT = 1, 65535
@@ -200,6 +212,11 @@ async def startup():
     )
     await load_state()
     await _tg_start_bot()
+    try:
+        from xray_core import start_xray
+        await start_xray()
+    except Exception as e:
+        logger.warning(f"Xray manager failed to start: {e}")
     log_activity("system", "سرور راه‌اندازی شد", "ok")
     logger.info(f"HVPN v9.5 started on port {CONFIG['port']}")
 
@@ -207,6 +224,11 @@ async def startup():
 async def shutdown():
     await save_state()
     await _tg_stop_bot()
+    try:
+        from xray_core import stop_xray
+        await stop_xray()
+    except Exception:
+        pass
     if http_client:
         await http_client.aclose()
 
@@ -245,7 +267,7 @@ def generate_vless_link(
     fp = (fingerprint or DEFAULT_FINGERPRINT).strip() or DEFAULT_FINGERPRINT
     if fp not in FINGERPRINTS:
         fp = DEFAULT_FINGERPRINT
-    alpn_val = (alpn or "").strip() or DEFAULT_ALPN_BY_PROTOCOL.get(protocol, "http/1.1")
+    alpn_val = (alpn or "").strip() or DEFAULT_ALPN_BY_PROTOCOL.get(protocol, "http/1.1") or "http/1.1"
     port_val = port or DEFAULT_PORT
     if not (MIN_PORT <= port_val <= MAX_PORT):
         port_val = DEFAULT_PORT
@@ -283,6 +305,9 @@ def generate_vless_link(
 def vless_link_for_link(link: dict, uid: str, host: str) -> str:
     """generate_vless_link رو با تنظیمات دستی همون کانفیگ (fingerprint/alpn/port) صدا می‌زنه."""
     proto = link.get("protocol", DEFAULT_PROTOCOL)
+    if proto == "trojan-ws" or proto in XRAY_PROTOCOLS:
+        from extra_protocols import build_extra_link
+        return build_extra_link(link, uid, host, f"HVPN-{link.get('label','')}")
     return generate_vless_link(
         uid, host,
         remark=f"HVPN-{link.get('label','')}",
@@ -1016,6 +1041,14 @@ app.add_api_websocket_route("/ws/{uuid}", websocket_tunnel)
 # ══════════════════════════════════════════════════════════════════════════════
 from xhttp_siz10 import router as xhttp_router
 app.include_router(xhttp_router)
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Trojan-WS (پایتونی) + بخش هوشمند (/api/smart/*). Reality/gRPC/HTTPUpgrade → xray_core.py
+# ══════════════════════════════════════════════════════════════════════════════
+from extra_protocols import trojan_tunnel
+app.add_api_websocket_route("/trojan-ws/{uuid}", trojan_tunnel)
+from smart import router as smart_router
+app.include_router(smart_router)
 
 # ══════════════════════════════════════════════════════════════════════════════
 # ربات مدیریت تلگرام (اختیاری — فقط اگه TELEGRAM_BOT_TOKEN ست شده باشه فعال می‌شه)

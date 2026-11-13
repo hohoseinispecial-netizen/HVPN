@@ -616,6 +616,7 @@ a{color:inherit;text-decoration:none}
 .pc-ws{background:var(--accent-d);color:var(--accent2)}
 .pc-xhttp{background:var(--purple-bg);color:#A78BFA}
 .pc-ultra{background:var(--green-bg);color:var(--green-t)}
+.pc-reality{background:var(--amber-bg);color:var(--amber-t)}
 .cfg-sub-tag{font-size:9.5px;color:var(--t3);display:flex;align-items:center;gap:4px;white-space:nowrap}
 .cfg-sub-tag i{color:var(--purple);font-size:11px}
 .tog{width:19px;height:30px;border-radius:19px;background:rgba(100,116,139,0.25);position:relative;cursor:pointer;transition:.2s;flex-shrink:0;border:none}
@@ -642,6 +643,27 @@ a{color:inherit;text-decoration:none}
   .cfg-actions{flex-wrap:wrap;border-top:1px solid var(--card-b);padding-top:10px;margin-top:2px;width:100%}
 }
 
+/* ══════ هوشمند ══════ */
+.sm-item{display:flex;gap:13px;align-items:flex-start;padding:13px 14px;border:1px solid var(--card-b);border-radius:14px;margin-bottom:9px;background:rgba(0,0,0,.08);transition:.15s}
+[data-theme="light"] .sm-item{background:rgba(37,99,235,.03)}
+.sm-item.sel{border-color:var(--accent);background:var(--accent-d)}
+.sm-item.off{opacity:.55}
+.sm-score{width:42px;height:42px;border-radius:12px;background:var(--accent-d);color:var(--accent2);font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sm-item.sel .sm-score{background:var(--accent);color:#fff}
+.sm-body{flex:1;min-width:0}
+.sm-title{font-size:12.5px;font-weight:800;color:var(--t1);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sm-why{font-size:10.5px;color:var(--t2);line-height:1.8;margin-top:5px}
+.sm-bars{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:9px}
+.sm-bar-l{font-size:9px;color:var(--t3);margin-bottom:3px;display:flex;justify-content:space-between}
+.sm-bar{height:4px;border-radius:3px;background:var(--accent-d);overflow:hidden}
+.sm-bar>i{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.sm-warn{font-size:10px;color:var(--amber-t);margin-top:7px;display:flex;gap:5px;align-items:center}
+.sm-off{font-size:10px;color:var(--red-t);margin-top:7px;display:flex;gap:5px;align-items:center}
+.sm-link{background:rgba(0,0,0,.2);border:1px solid var(--card-b);border-radius:10px;padding:10px 12px;margin-top:8px}
+.sm-link code{display:block;font-family:ui-monospace,monospace;font-size:9.5px;color:var(--accent2);word-break:break-all;line-height:1.7;margin:6px 0}
+.sm-scan-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--card-b);font-size:11px}
+.sm-scan-row:last-child{border-bottom:none}
+@media(max-width:560px){.sm-bars{grid-template-columns:1fr 1fr}}
 /* ══════ اتصالات فعال با IP ══════ */
 .conn-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
 .conn-card{background:var(--card);border:1px solid var(--card-b);border-radius:16px;padding:15px 17px;transition:.2s;position:relative;overflow:hidden}
@@ -815,6 +837,7 @@ a{color:inherit;text-decoration:none}
     <div class="nav-it on" data-pg="overview"><i class="ti ti-layout-dashboard"></i> داشبورد</div>
     <div class="nav-it" data-pg="links"><i class="ti ti-link-plus"></i> کانفیگ‌ها <span class="nav-badge" id="links-nb">0</span></div>
     <div class="nav-it" data-pg="subgroups"><i class="ti ti-folders"></i> گروه‌های ساب <span class="nav-badge" id="subs-nb">0</span></div>
+    <div class="nav-it" data-pg="smart"><i class="ti ti-sparkles"></i> هوشمند <span class="nav-badge">جدید</span></div>
     <div class="nav-it" data-pg="subscriptions"><i class="ti ti-rss"></i> سابسکریپشن</div>
     <div class="nav-it" data-pg="traffic"><i class="ti ti-chart-area"></i> ترافیک</div>
     <div class="nav-it" data-pg="connections"><i class="ti ti-plug-connected"></i> اتصالات <span class="nav-badge" id="conns-nb">0</span></div>
@@ -947,6 +970,12 @@ a{color:inherit;text-decoration:none}
           <option value="vless-ws">VLESS / WebSocket</option>
           <option value="xhttp-packet-up">XHTTP Ultra · packet-up</option>
           <option value="xhttp-stream-up">XHTTP Ultra · stream-up</option>
+          <option value="trojan-ws">Trojan / WebSocket</option>
+          <option value="vless-reality">VLESS · Reality · Vision</option>
+          <option value="vless-grpc-reality">VLESS · gRPC · Reality</option>
+          <option value="vless-xhttp-reality">VLESS · XHTTP · Reality</option>
+          <option value="trojan-reality">Trojan · Reality</option>
+          <option value="vless-httpupgrade">VLESS · HTTPUpgrade</option>
         </select>
         <div class="proto-cards">
           <div class="proto-card active" data-val="vless-ws" onclick="selectProto('vless-ws',this)">
@@ -966,6 +995,42 @@ a{color:inherit;text-decoration:none}
             <div class="proto-card-icon"><i class="ti ti-rocket"></i></div>
             <div class="proto-card-title">XHTTP · stream-up</div>
             <div class="proto-card-desc">تاخیر پایین‌تر</div>
+          </div>
+          <div class="proto-card" data-val="trojan-ws" onclick="selectProto('trojan-ws',this)">
+            <div class="proto-card-check"><i class="ti ti-check"></i></div>
+            <div class="proto-card-icon"><i class="ti ti-shield-lock"></i></div>
+            <div class="proto-card-title">Trojan · WS</div>
+            <div class="proto-card-desc">پایتونی · پشت CDN</div>
+          </div>
+          <div class="proto-card" data-val="vless-reality" onclick="selectProto('vless-reality',this)">
+            <div class="proto-card-check"><i class="ti ti-check"></i></div>
+            <div class="proto-card-icon"><i class="ti ti-ghost-2"></i></div>
+            <div class="proto-card-title">VLESS · Reality</div>
+            <div class="proto-card-desc">مخفی‌ترین · Vision · Xray</div>
+          </div>
+          <div class="proto-card" data-val="vless-grpc-reality" onclick="selectProto('vless-grpc-reality',this)">
+            <div class="proto-card-check"><i class="ti ti-check"></i></div>
+            <div class="proto-card-icon"><i class="ti ti-network"></i></div>
+            <div class="proto-card-title">gRPC · Reality</div>
+            <div class="proto-card-desc">چندجریانه · Xray</div>
+          </div>
+          <div class="proto-card" data-val="vless-xhttp-reality" onclick="selectProto('vless-xhttp-reality',this)">
+            <div class="proto-card-check"><i class="ti ti-check"></i></div>
+            <div class="proto-card-icon"><i class="ti ti-arrows-exchange"></i></div>
+            <div class="proto-card-title">XHTTP · Reality</div>
+            <div class="proto-card-desc">جدیدترین · Xray</div>
+          </div>
+          <div class="proto-card" data-val="trojan-reality" onclick="selectProto('trojan-reality',this)">
+            <div class="proto-card-check"><i class="ti ti-check"></i></div>
+            <div class="proto-card-icon"><i class="ti ti-shield-check"></i></div>
+            <div class="proto-card-title">Trojan · Reality</div>
+            <div class="proto-card-desc">مستقل از VLESS · Xray</div>
+          </div>
+          <div class="proto-card" data-val="vless-httpupgrade" onclick="selectProto('vless-httpupgrade',this)">
+            <div class="proto-card-check"><i class="ti ti-check"></i></div>
+            <div class="proto-card-icon"><i class="ti ti-cloud-upload"></i></div>
+            <div class="proto-card-title">HTTPUpgrade</div>
+            <div class="proto-card-desc">سبک · پشت CDN · Xray</div>
           </div>
         </div>
       </div>
@@ -1036,7 +1101,7 @@ a{color:inherit;text-decoration:none}
         </div>
       </div>
       <div class="cp-footer">
-        <div class="cp-footer-note"><i class="ti ti-info-circle"></i> UUID کاملاً رندوم تولید می‌شود · فقط UUID‌های ثبت‌شده اجازه اتصال دارند · پروتکل پس از ساخت قابل تغییر نیست.</div>
+        <div class="cp-footer-note"><i class="ti ti-info-circle"></i> UUID کاملاً رندوم تولید می‌شود · فقط UUID‌های ثبت‌شده اجازه اتصال دارند · پروتکل پس از ساخت قابل تغییر نیست · محدودیت سرعت و آی‌پی فقط روی پروتکل‌های پایتونی (WS / XHTTP / Trojan-WS) اعمال می‌شود؛ Reality، gRPC و HTTPUpgrade توسط هسته‌ی Xray سرو می‌شوند و سهمیه/انقضا دارند ولی محدودیت سرعت/آی‌پی ندارند.</div>
         <button class="cp-submit-btn" onclick="createLink()"><i class="ti ti-link-plus"></i> ساخت کانفیگ</button>
       </div>
     </div>
@@ -1061,6 +1126,53 @@ a{color:inherit;text-decoration:none}
   <div class="sub-grid" id="subs-grid">
     <div class="subs-empty-v2"><div class="subs-empty-v2-icon"><i class="ti ti-folders"></i></div><div class="subs-empty-v2-title">هنوز گروهی وجود ندارد</div><div class="subs-empty-v2-sub">یک گروه جدید بسازید تا کانفیگ‌ها را دسته‌بندی کنید</div></div>
   </div>
+</section>
+<section class="pg" id="pg-smart">
+  <div class="topbar">
+    <div><div class="tb-title"><i class="ti ti-sparkles"></i> هوشمند</div><div class="tb-sub">طراحی خودکار بهترین ترکیب‌های پروتکل · ترنسپورت · امنیت (TLS / Reality)</div></div>
+    <div class="tb-right"><span class="badge bg-amber" id="sm-xray-badge">—</span><button class="btn btn-p btn-sm" onclick="loadSmart()"><i class="ti ti-refresh"></i> رفرش</button></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-title"><i class="ti ti-target-arrow"></i> هدف و تنظیمات بسته</div>
+      <div class="cp-block-label"><i class="ti ti-flag"></i> هدف</div>
+      <div class="chip-row" id="sm-goals" style="margin-top:0;margin-bottom:14px">
+        <span class="chip active" onclick="smSetGoal('balanced',this)">متعادل</span>
+        <span class="chip" onclick="smSetGoal('stealth',this)">حداکثر مخفی‌کاری</span>
+        <span class="chip" onclick="smSetGoal('speed',this)">حداکثر سرعت</span>
+        <span class="chip" onclick="smSetGoal('compat',this)">ثبات و CDN</span>
+      </div>
+      <div class="form-row" style="margin-bottom:11px">
+        <div class="fg" style="flex:1"><label>پیشوند نام</label><input class="fi" id="sm-label" value="هوشمند" style="width:100%"></div>
+        <div class="fg"><label>تعداد کانفیگ</label><input class="fi" id="sm-count" type="number" min="1" max="8" value="4" style="width:90px" onchange="smPlan()"></div>
+      </div>
+      <div class="form-row" style="margin-bottom:11px">
+        <div class="fg" style="flex:1"><label>سهمیه (0 = نامحدود)</label><input class="fi" id="sm-val" type="number" min="0" step="0.1" value="0" style="width:100%"></div>
+        <div class="fg"><label>واحد</label><select class="fs" id="sm-unit"><option value="GB">GB</option><option value="MB">MB</option></select></div>
+        <div class="fg" style="flex:1"><label>انقضا (روز)</label><input class="fi" id="sm-exp" type="number" min="0" value="0" style="width:100%"></div>
+      </div>
+      <div class="form-row" style="margin-bottom:12px">
+        <div class="fg" style="flex:1"><label>محدودیت سرعت Mbps (فقط پایتونی)</label><input class="fi" id="sm-speed" type="number" min="0" step="0.5" value="0" style="width:100%"></div>
+        <div class="fg" style="flex:1"><label>محدودیت آی‌پی (فقط پایتونی)</label><input class="fi" id="sm-iplimit" type="number" min="0" value="0" style="width:100%"></div>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--t2);margin-bottom:14px;cursor:pointer"><input type="checkbox" id="sm-group" checked style="accent-color:var(--accent)"> همه را در یک گروه ساب (صفحه‌ی پابلیک) قرار بده</label>
+      <button class="cp-submit-btn" style="width:100%;justify-content:center" onclick="smBuild()"><i class="ti ti-wand"></i> طراحی و ساخت کانفیگ‌ها</button>
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="ti ti-server-cog"></i> وضعیت هسته‌ی Xray و Reality</div>
+      <div id="sm-status">—</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+        <button class="btn btn-g" onclick="smScan(false)"><i class="ti ti-radar-2"></i> اسکن مقصد Reality</button>
+        <button class="btn btn-amber" onclick="smScan(true)"><i class="ti ti-check"></i> اسکن و اعمال بهترین</button>
+      </div>
+      <div id="sm-scan" style="margin-top:10px"></div>
+    </div>
+  </div>
+  <div class="card mb16">
+    <div class="card-title"><i class="ti ti-list-check"></i> ترکیب‌های پیشنهادی <span class="ml-auto badge bg-blue" id="sm-plan-badge">—</span></div>
+    <div id="sm-plan">در حال بارگذاری...</div>
+  </div>
+  <div class="card" id="sm-result" style="display:none"></div>
 </section>
 <section class="pg" id="pg-subscriptions">
   <div class="topbar"><div><div class="tb-title"><i class="ti ti-rss"></i> سابسکریپشن</div><div class="tb-sub">لینک‌های اشتراک برای اپ‌های v2ray</div></div></div>
@@ -1314,7 +1426,7 @@ function expChip(exp,expired){
   return `<span class="exp-chip ec-ok"><i class="ti ti-calendar-check"></i> ${toFa(d)} روز مانده</span>`;
 }
 function protoBadge(p){
-  const m={'vless-ws':['VLESS · WS','pc-ws'],'xhttp-packet-up':['XHTTP · packet-up','pc-xhttp'],'xhttp-stream-up':['XHTTP · stream-up','pc-xhttp'],'xhttp-stream-one':['XHTTP ULTRA','pc-ultra']};
+  const m={'vless-ws':['VLESS · WS','pc-ws'],'xhttp-packet-up':['XHTTP · packet-up','pc-xhttp'],'xhttp-stream-up':['XHTTP · stream-up','pc-xhttp'],'xhttp-stream-one':['XHTTP ULTRA','pc-ultra'],'trojan-ws':['Trojan · WS','pc-xhttp'],'vless-reality':['VLESS · Reality','pc-reality'],'vless-grpc-reality':['gRPC · Reality','pc-reality'],'vless-xhttp-reality':['XHTTP · Reality','pc-reality'],'trojan-reality':['Trojan · Reality','pc-reality'],'vless-httpupgrade':['HTTPUpgrade','pc-xhttp']};
   const v=m[p]||m['vless-ws'];
   return `<span class="proto-chip ${v[1]}">${v[0]}</span>`;
 }
@@ -1368,7 +1480,7 @@ overlay.addEventListener('click',closeSb);
 function navTo(name){
   document.querySelectorAll('.nav-it').forEach(n=>n.classList.toggle('on',n.dataset.pg===name));
   document.querySelectorAll('.pg').forEach(p=>p.classList.toggle('on',p.id==='pg-'+name));
-  const loaders={links:loadLinks,connections:loadConns,errors:loadErrs,subscriptions:loadSubsPage,subgroups:loadSubs,logs:loadActivity};
+  const loaders={links:loadLinks,connections:loadConns,errors:loadErrs,subscriptions:loadSubsPage,subgroups:loadSubs,logs:loadActivity,smart:loadSmart};
   if(loaders[name])loaders[name]();
   closeSb();window.scrollTo({top:0,behavior:'smooth'});
 }
@@ -1923,6 +2035,87 @@ function initCharts(){
     }
   });
 }
+let smGoal='balanced',smLinks=[];
+const SM_AXES=[['stealth','مخفی‌کاری'],['speed','سرعت'],['stability','پایداری'],['cdn','CDN']];
+function smSetGoal(g,el){
+  smGoal=g;
+  document.querySelectorAll('#sm-goals .chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');smPlan();
+}
+async function loadSmart(){await smStatus();await smPlan();}
+async function smStatus(){
+  try{
+    const d=await (await authF('/api/smart/status')).json(),x=d.xray;
+    const b=document.getElementById('sm-xray-badge');
+    b.textContent=x.available?(x.running?'Xray فعال':'Xray آماده'):'Xray نصب نیست';
+    b.className='badge '+(x.available?'bg-green':'bg-amber');
+    const row=(k,v)=>`<div class="sr"><span class="sr-k">${k}</span><span class="sr-v">${v}</span></div>`;
+    let h=row('هسته‌ی Xray',x.available?esc(x.version||'نصب است'):'<span style="color:var(--amber-t)">نصب نیست — XRAY_BIN</span>');
+    h+=row('کلید Reality',x.reality_ready?'<span style="color:var(--green-t)">آماده</span>':'ساخته نشده');
+    h+=row('SNI / مقصد Reality',esc(x.reality_sni)+' → '+esc(x.reality_dest));
+    h+=row('HTTPUpgrade',x.httpupgrade_security==='tls'?'TLS':'بدون TLS (پشت CDN)');
+    h+=row('هاست عمومی',esc(x.public_host||'همان دامنه‌ی پنل'));
+    h+=Object.entries(x.ports).map(([p,v])=>row(esc(p),'داخلی '+v.internal+' · عمومی '+v.public)).join('');
+    if(x.last_error)h+=`<div class="cl amber"><i class="ti ti-alert-triangle"></i><span>${esc(x.last_error)}</span></div>`;
+    document.getElementById('sm-status').innerHTML=h;
+  }catch(e){console.error(e)}
+}
+async function smPlan(){
+  const count=Number(document.getElementById('sm-count').value)||4;
+  try{
+    const d=await (await authF('/api/smart/plan?goal='+smGoal+'&count='+count)).json();
+    document.getElementById('sm-plan-badge').textContent=toFa(d.count)+' انتخاب‌شده · '+esc(d.goal_title);
+    document.getElementById('sm-plan').innerHTML=d.items.map(p=>`
+      <div class="sm-item ${p.available?'':'off'} ${p.selected?'sel':''}">
+        <div class="sm-score">${toFa(p.score)}</div>
+        <div class="sm-body">
+          <div class="sm-title">${esc(p.title)} ${protoBadge(p.protocol)}
+            <span class="badge ${p.engine==='xray'?'bg-purple':'bg-blue'}" style="font-size:9px">${p.engine==='xray'?'هسته‌ی Xray':'پایتون'}</span>
+            ${p.selected?'<span class="badge bg-green" style="font-size:9px"><i class="ti ti-check"></i> انتخاب شد · '+esc(p.fingerprint)+'</span>':''}</div>
+          <div class="sm-why">${esc(p.why)}</div>
+          <div class="sm-bars">${SM_AXES.map(([k,l])=>`<div><div class="sm-bar-l"><span>${l}</span><span>${toFa(p.scores[k])}</span></div><div class="sm-bar"><i style="width:${p.scores[k]*10}%"></i></div></div>`).join('')}</div>
+          ${p.available?'':`<div class="sm-off"><i class="ti ti-plug-off"></i> ${esc(p.reason)}</div>`}
+          ${p.warn?`<div class="sm-warn"><i class="ti ti-alert-triangle"></i> ${esc(p.warn)}</div>`:''}
+        </div>
+      </div>`).join('');
+  }catch(e){console.error(e)}
+}
+async function smScan(apply){
+  if(apply&&!confirm('با تغییر SNI، لینک‌های Reality که قبلاً به کاربرها داده‌ای باید دوباره ارسال شوند. ادامه می‌دهی؟'))return;
+  const box=document.getElementById('sm-scan');
+  box.innerHTML='<div style="color:var(--t3);font-size:11px"><i class="ti ti-loader-2" style="animation:spin 1s linear infinite"></i> در حال اندازه‌گیری از روی سرور...</div>';
+  try{
+    const r=await authF('/api/smart/scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({apply})});
+    const d=await r.json();
+    if(!r.ok)throw new Error(d.detail||'خطا');
+    box.innerHTML=(d.applied?`<div class="cl" style="margin:0 0 8px"><i class="ti ti-check"></i><span>مقصد روی ${esc(d.applied)} تنظیم شد.</span></div>`:'')+
+      d.results.map(x=>`<div class="sm-scan-row"><i class="ti ${x.ok?'ti-circle-check':'ti-circle-x'}" style="color:${x.ok?'var(--green)':'var(--red)'}"></i><span style="flex:1;font-family:ui-monospace,monospace">${esc(x.host)}</span><span style="color:var(--t3)">${x.ms!=null?x.ms+' ms':esc(x.error||'—')} · ${esc(x.tls||'')} ${esc(x.alpn||'')}</span></div>`).join('');
+    smStatus();
+  }catch(e){box.innerHTML='';toast('✗ '+e.message,'err')}
+}
+async function smBuild(){
+  const body={
+    goal:smGoal,count:Number(document.getElementById('sm-count').value)||4,
+    label:document.getElementById('sm-label').value.trim()||'هوشمند',
+    limit_value:Number(document.getElementById('sm-val').value)||0,limit_unit:document.getElementById('sm-unit').value,
+    expires_days:Number(document.getElementById('sm-exp').value)||0,
+    speed_limit_value:Number(document.getElementById('sm-speed').value)||0,speed_limit_unit:'MBIT',
+    ip_limit:Number(document.getElementById('sm-iplimit').value)||0,
+    group:document.getElementById('sm-group').checked
+  };
+  try{
+    const r=await authF('/api/smart/build',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const d=await r.json();
+    if(!r.ok)throw new Error(d.detail||'خطا');
+    smLinks=d.links;
+    const card=document.getElementById('sm-result');card.style.display='block';
+    card.innerHTML=`<div class="card-title"><i class="ti ti-circle-check" style="color:var(--green)"></i> ${toFa(d.links.length)} کانفیگ ساخته شد</div>`+
+      (d.group?`<div class="sub-box" style="margin-top:0"><span class="sub-url">${esc(d.group.public_url)}</span><button class="btn btn-sm btn-pur" onclick="navigator.clipboard.writeText('${esc(d.group.public_url)}').then(()=>toast('کپی شد ✓','ok'))"><i class="ti ti-copy"></i> کپی صفحه‌ی گروه</button></div>`:'')+
+      d.links.map((l,i)=>`<div class="sm-link"><div class="sm-title">${esc(l.title)} ${protoBadge(l.protocol)} <span class="badge bg-blue" style="font-size:9px">${esc(l.fingerprint)}</span></div><code>${esc(l.vless_link)}</code><div style="display:flex;gap:6px"><button class="btn btn-sm btn-p" onclick="navigator.clipboard.writeText(smLinks[${i}].vless_link).then(()=>toast('لینک کپی شد ✓','ok'))"><i class="ti ti-copy"></i> کپی</button><button class="btn btn-sm btn-g" onclick="showQR(smLinks[${i}].vless_link)"><i class="ti ti-qrcode"></i> QR</button></div></div>`).join('');
+    toast('بسته‌ی هوشمند ساخته شد ✓','ok');loadLinks();loadSubs();
+    card.scrollIntoView({behavior:'smooth',block:'start'});
+  }catch(e){toast('✗ '+e.message,'err')}
+}
 let ws;
 function wsLog(c,m){const l=document.getElementById('ws-log'),p=document.createElement('p');const colors={ok:'#34D399',err:'#F87171',info:'#7BAED4',sent:'#FCD34D'};p.style.color=colors[c]||'#fff';p.textContent='['+new Date().toLocaleTimeString('fa-IR')+'] '+m;l.appendChild(p);l.scrollTop=l.scrollHeight}
 function wsConn(){const u=document.getElementById('ws-uuid').value.trim();if(!u){toast('UUID را وارد کنید','err');return}const url=(location.protocol==='https:'?'wss':'ws')+'://'+location.host+'/ws/'+u;wsLog('info','اتصال: '+url);ws=new WebSocket(url);ws.onopen=()=>wsLog('ok','✓ متصل - UUID معتبر');ws.onerror=()=>wsLog('err','✗ خطا - UUID نامعتبر یا غیرفعال');ws.onmessage=m=>wsLog('info','دریافت '+(m.data.size||m.data.length)+' byte');ws.onclose=e=>wsLog('err','قطع ('+e.code+')'+(e.code===1008?' - دسترسی رد شد':''))}
@@ -2180,7 +2373,7 @@ function fmtB(b){{if(!b||b===0)return '0 B';if(b<1024)return b+' B';if(b<1024**2
 function toFa(n){{return String(n).replace(/\\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d])}}
 function protoChip(p){{
   if(p==='xhttp-stream-one')return '<span class="proto-chip pc-ultra"><i class="ti ti-bolt"></i> XHTTP ULTRA</span>';
-  if(p&&p.startsWith('xhttp'))return '<span class="proto-chip pc-xhttp">'+esc(p)+'</span>';
+  if(p&&p.indexOf('reality')>-1)return '<span class="proto-chip pc-ultra">'+esc(p)+'</span>';if(p==='trojan-ws'||p==='vless-httpupgrade')return '<span class="proto-chip pc-xhttp">'+esc(p)+'</span>';if(p&&p.startsWith('xhttp'))return '<span class="proto-chip pc-xhttp">'+esc(p)+'</span>';
   return '<span class="proto-chip pc-ws">VLESS · WS</span>';
 }}
 

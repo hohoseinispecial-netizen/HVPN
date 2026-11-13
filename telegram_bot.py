@@ -1,6 +1,7 @@
 # telegram_bot.py
 import asyncio
 import os
+import html
 import re
 
 import httpx
@@ -33,6 +34,7 @@ from main import (
     set_link_sub,
     remove_sub_group,
 )
+from smart import GOALS, build_smart_pack
 
 BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
 _admin_ids_raw = os.environ.get("TELEGRAM_ADMIN_IDS", "").strip()
@@ -56,6 +58,12 @@ PROTOCOL_LABELS = {
     "xhttp-packet-up": "XHTTP (packet-up)",
     "xhttp-stream-up": "XHTTP (stream-up)",
     "xhttp-stream-one": "XHTTP (stream-one)",
+    "trojan-ws": "Trojan + WebSocket",
+    "vless-reality": "VLESS + Reality (Vision)",
+    "vless-grpc-reality": "VLESS + gRPC + Reality",
+    "vless-xhttp-reality": "VLESS + XHTTP + Reality",
+    "trojan-reality": "Trojan + Reality",
+    "vless-httpupgrade": "VLESS + HTTPUpgrade",
 }
 
 def _protocol_label(p: str) -> str:
@@ -143,6 +151,7 @@ def _main_menu_kb():
     return {"inline_keyboard": [
         [{"text": "📋 لیست کانفیگ‌ها", "callback_data": "list:0"}],
         [{"text": "➕ ساخت کانفیگ جدید", "callback_data": "newcfg"}],
+        [{"text": "🧠 هوشمند (طراحی خودکار بهترین کانفیگ‌ها)", "callback_data": "smart"}],
         [{"text": "🗂 گروه‌های ساب (لینک حرفه‌ای)", "callback_data": "subs:0"}],
         [{"text": "🔄 رفرش", "callback_data": "menu"}],
     ]}
@@ -533,6 +542,34 @@ async def _handle_callback(cb: dict):
         return
 
     # ── گروه‌های ساب (لینک حرفه‌ای) ────────────────────────────────────────────
+    if data == "smart":
+        rows = [[{"text": g["title"], "callback_data": f"smartgo:{k}"}] for k, g in GOALS.items()]
+        rows.append([{"text": "⬅ منوی اصلی", "callback_data": "menu"}])
+        await _edit(chat_id, message_id,
+                    "🧠 هدفت رو انتخاب کن؛ بهترین ترکیب‌های قابل‌اجرا روی این سرور طراحی و توی یک گروه ساب ساخته می‌شن:",
+                    {"inline_keyboard": rows})
+        return
+
+    if data.startswith("smartgo:"):
+        goal = data.split(":", 1)[1]
+        if goal not in GOALS:
+            await _answer_cb(cb_id, "هدف نامعتبر")
+            return
+        await _edit(chat_id, message_id, "⏳ در حال طراحی و ساخت کانفیگ‌ها...")
+        try:
+            res = await build_smart_pack(get_host(), goal=goal, count=4, label="هوشمند", group=True)
+        except Exception as e:
+            await _send(chat_id, f"❗️ ساخت ناموفق بود: {html.escape(str(getattr(e, 'detail', e)))}", _main_menu_kb())
+            return
+        lines = [f"✅ {len(res['links'])} کانفیگ برای هدف «{GOALS[goal]['title']}» ساخته شد."]
+        if res.get("group"):
+            lines.append(f"\n🔗 صفحه‌ی گروه:\n<code>{html.escape(res['group']['public_url'])}</code>")
+        for l in res["links"]:
+            warn = f"\n⚠️ {html.escape(l['warn'])}" if l.get("warn") else ""
+            lines.append(f"\n<b>{html.escape(l['title'])}</b> (امتیاز {l['score']}){warn}\n<code>{html.escape(l['vless_link'])}</code>")
+        await _send(chat_id, "\n".join(lines), _main_menu_kb())
+        return
+
     if data.startswith("subs:"):
         page = int(data.split(":", 1)[1] or 0)
         if not SUBS:
