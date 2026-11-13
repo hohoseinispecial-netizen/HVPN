@@ -1,14 +1,14 @@
-# pages.py  -  HVPN v9.5
+# pages.py  -  New York
 # شامل: LOGIN_HTML, DASHBOARD_HTML, get_public_page_html()
 
-# لوگوی HVPN (به‌صورت base64 داخلی، بدون نیاز به هاست خارجی)
+# لوگوی New York (به‌صورت base64 داخلی، بدون نیاز به هاست خارجی)
 
 LOGO_B64 = "iiiii"
 LOGIN_HTML = r"""<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ورود · HVPN</title>
+<title>ورود · New York</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
@@ -60,17 +60,13 @@ input:focus+.ic{color:var(--accent)}
 <div class="wrap">
   <div class="card">
     <div class="brand">
-      <div class="brand-img"><img src="data:image/png;base64,__LOGO_B64__" alt="HVPN"></div>
-      <div><div class="brand-name">HVPN</div><div class="brand-sub">v9.5</div></div>
+      <div class="brand-img"><img src="data:image/png;base64,__LOGO_B64__" alt="New York"></div>
+      <div><div class="brand-name">New York</div><div class="brand-sub">1.0</div></div>
     </div>
     <h1>ورود به پنل</h1>
     <p class="sub">رمز عبور را برای دسترسی به داشبورد وارد کنید</p>
     <div class="err" id="err"><i class="ti ti-alert-circle"></i><span id="err-text"></span></div>
-    <div class="hint">
-      <span class="hint-label">رمز پیش‌فرض سیستم</span>
-      <span class="hint-val" onclick="document.getElementById('pw').value='HVPN123';document.getElementById('pw').focus()">HVPN123</span>
-    </div>
-    <form id="form">
+        <form id="form">
       <div class="field">
         <label>رمز عبور</label>
         <div class="inp-wrap">
@@ -90,9 +86,9 @@ document.getElementById('form').addEventListener('submit',async e=>{
   err.classList.remove('show');btn.disabled=true;
   btn.innerHTML='<i class="ti ti-loader-2" style="animation:spin 1s linear infinite"></i> در حال ورود...';
   try{
-    const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:document.getElementById('pw').value})});
+    const r=await fetch('__PANEL__/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:document.getElementById('pw').value})});
     if(!r.ok){const d=await r.json().catch(()=>({}));throw new Error(d.detail||'خطا');}
-    location.href='/dashboard';
+    location.href='__PANEL__/dashboard';
   }catch(e){
     et.textContent=e.message;err.classList.add('show');
     btn.disabled=false;btn.innerHTML='<i class="ti ti-login-2"></i> ورود به داشبورد';
@@ -106,7 +102,7 @@ DASHBOARD_HTML = r"""<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HVPN</title>
+<title>New York</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
@@ -817,8 +813,8 @@ a{color:inherit;text-decoration:none}
 </div>
 <div class="mob-top">
   <div class="ml">
-    <div class="mob-logo"><img src="data:image/png;base64,__LOGO_B64__" alt="HVPN"></div>
-    <span class="mob-title">HVPN</span>
+    <div class="mob-logo"><img src="data:image/png;base64,__LOGO_B64__" alt="New York"></div>
+    <span class="mob-title">New York</span>
   </div>
   <div class="mob-right">
     <button class="theme-mob" id="theme-mob-btn" onclick="toggleTheme()"><i class="ti ti-sun" id="theme-mob-icon"></i></button>
@@ -829,8 +825,8 @@ a{color:inherit;text-decoration:none}
 <aside class="sidebar" id="sb">
   <button class="sb-close" id="close-sb"><i class="ti ti-x"></i></button>
   <div class="logo">
-    <div class="logo-img"><img src="data:image/png;base64,__LOGO_B64__" alt="HVPN"></div>
-    <div><div class="logo-name">HVPN</div><div class="logo-sub">v9.5</div></div>
+    <div class="logo-img"><img src="data:image/png;base64,__LOGO_B64__" alt="New York"></div>
+    <div><div class="logo-name">New York</div><div class="logo-sub">1.0</div></div>
   </div>
   <div class="nav-wrap">
     <div class="nav-sec">پنل</div>
@@ -866,7 +862,7 @@ a{color:inherit;text-decoration:none}
     </div>
   </div>
   <div class="metrics">
-    <div class="metric"><div class="m-icon"><i class="ti ti-plug-connected"></i></div><div class="m-label">اتصالات فعال</div><div class="m-val" id="m-conns">—</div><div class="m-sub"><span class="dot dg pulse"></span> WebSocket / XHTTP زنده</div></div>
+    <div class="metric"><div class="m-icon"><i class="ti ti-plug-connected"></i></div><div class="m-label">اتصالات فعال</div><div class="m-val" id="m-conns">—</div><div class="m-sub"><span class="dot dg pulse"></span> زنده</div></div>
     <div class="metric"><div class="m-icon"><i class="ti ti-transfer"></i></div><div class="m-label">کل ترافیک</div><div class="m-val" id="m-traffic">—<span class="m-unit">MB</span></div><div class="m-sub">از راه‌اندازی</div></div>
     <div class="metric suc"><div class="m-icon suc"><i class="ti ti-link"></i></div><div class="m-label">کانفیگ فعال</div><div class="m-val" id="m-alinks">—</div><div class="m-sub" id="m-lsub">از کل</div></div>
     <div class="metric pur"><div class="m-icon pur"><i class="ti ti-folders"></i></div><div class="m-label">گروه‌های ساب</div><div class="m-val" id="m-subs">—</div><div class="m-sub">فعال</div></div>
@@ -874,7 +870,7 @@ a{color:inherit;text-decoration:none}
   <div class="vless-box">
     <div class="vl-header">
       <div class="vl-title"><i class="ti ti-link"></i> لینک پیش‌فرض (بدون محدودیت)</div>
-      <span class="badge bg-blue"><span class="dot db"></span> TLS 443 · WS</span>
+      <span class="badge bg-blue"><span class="dot db"></span> TLS 443</span>
     </div>
     <div class="vl-code" id="vless-main">در حال دریافت...</div>
     <div class="vl-actions">
@@ -892,8 +888,8 @@ a{color:inherit;text-decoration:none}
     <div class="card">
       <div class="card-title"><i class="ti ti-activity"></i> وضعیت سرویس</div>
       <div class="sr"><span class="sr-k"><i class="ti ti-shield-check"></i> UUID Auth</span><span class="sr-v" style="color:var(--green-t)">● فعال · سخت‌گیرانه</span></div>
-      <div class="sr"><span class="sr-k"><i class="ti ti-circle-check"></i> VLESS / WS Tunnel</span><span class="sr-v" style="color:var(--green-t)">● فعال</span></div>
-      <div class="sr"><span class="sr-k"><i class="ti ti-bolt"></i> Siz10a XHTTP Ultra</span><span class="sr-v" style="color:var(--green-t)">● فعال · 3 mode</span></div>
+      <div class="sr"><span class="sr-k"><i class="ti ti-circle-check"></i> Core service A</span><span class="sr-v" style="color:var(--green-t)">● فعال</span></div>
+      <div class="sr"><span class="sr-k"><i class="ti ti-bolt"></i> Core service B</span><span class="sr-v" style="color:var(--green-t)">● فعال · 3 mode</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-folders"></i> Sub Groups</span><span class="sr-v" style="color:var(--green-t)">● فعال v9</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-rss"></i> Subscription API</span><span class="sr-v" style="color:var(--green-t)">● فعال</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-clock"></i> آپتایم</span><span class="sr-v" id="uptime-inline">—</span></div>
@@ -908,7 +904,7 @@ a{color:inherit;text-decoration:none}
     </div>
   </div>
   <div class="dash-footer">
-    <span class="df-text">HVPN v9.5 · Railway</span>
+    <span class="df-text">New York · Railway</span>
     <a class="df-link" href="https://t.me/Hohoseini" target="_blank"><i class="ti ti-brand-telegram"></i> t.me/Hohoseini</a>
     
   </div>
@@ -981,56 +977,56 @@ a{color:inherit;text-decoration:none}
           <div class="proto-card active" data-val="vless-ws" onclick="selectProto('vless-ws',this)">
             <div class="proto-card-check"><i class="ti ti-check"></i></div>
             <div class="proto-card-icon"><i class="ti ti-link"></i></div>
-            <div class="proto-card-title">VLESS / WS</div>
-            <div class="proto-card-desc">پایدار و همه‌منظوره</div>
+            <div class="proto-card-title">Line A1</div>
+            <div class="proto-card-desc">Route</div>
           </div>
           <div class="proto-card" data-val="xhttp-packet-up" onclick="selectProto('xhttp-packet-up',this)">
             <div class="proto-card-check"><i class="ti ti-check"></i></div>
             <div class="proto-card-icon"><i class="ti ti-bolt"></i></div>
-            <div class="proto-card-title">XHTTP · packet-up</div>
-            <div class="proto-card-desc">سازگار با CDN</div>
+            <div class="proto-card-title">Line B1</div>
+            <div class="proto-card-desc">Route</div>
           </div>
           <div class="proto-card" data-val="xhttp-stream-up" onclick="selectProto('xhttp-stream-up',this)">
             <div class="proto-card-check"><i class="ti ti-check"></i></div>
             <div class="proto-card-icon"><i class="ti ti-rocket"></i></div>
-            <div class="proto-card-title">XHTTP · stream-up</div>
-            <div class="proto-card-desc">تاخیر پایین‌تر</div>
+            <div class="proto-card-title">Line B2</div>
+            <div class="proto-card-desc">Route</div>
           </div>
           <div class="proto-card" data-val="trojan-ws" onclick="selectProto('trojan-ws',this)">
             <div class="proto-card-check"><i class="ti ti-check"></i></div>
             <div class="proto-card-icon"><i class="ti ti-shield-lock"></i></div>
-            <div class="proto-card-title">Trojan · WS</div>
-            <div class="proto-card-desc">پایتونی · پشت CDN</div>
+            <div class="proto-card-title">Line C1</div>
+            <div class="proto-card-desc">Route</div>
           </div>
           <div class="proto-card" data-val="vless-reality" onclick="selectProto('vless-reality',this)">
             <div class="proto-card-check"><i class="ti ti-check"></i></div>
             <div class="proto-card-icon"><i class="ti ti-ghost-2"></i></div>
-            <div class="proto-card-title">VLESS · Reality</div>
-            <div class="proto-card-desc">مخفی‌ترین · Vision · Xray</div>
+            <div class="proto-card-title">Line R1</div>
+            <div class="proto-card-desc">Route</div>
           </div>
           <div class="proto-card" data-val="vless-grpc-reality" onclick="selectProto('vless-grpc-reality',this)">
             <div class="proto-card-check"><i class="ti ti-check"></i></div>
             <div class="proto-card-icon"><i class="ti ti-network"></i></div>
-            <div class="proto-card-title">gRPC · Reality</div>
-            <div class="proto-card-desc">چندجریانه · Xray</div>
+            <div class="proto-card-title">Line R2</div>
+            <div class="proto-card-desc">Route</div>
           </div>
           <div class="proto-card" data-val="vless-xhttp-reality" onclick="selectProto('vless-xhttp-reality',this)">
             <div class="proto-card-check"><i class="ti ti-check"></i></div>
             <div class="proto-card-icon"><i class="ti ti-arrows-exchange"></i></div>
-            <div class="proto-card-title">XHTTP · Reality</div>
-            <div class="proto-card-desc">جدیدترین · Xray</div>
+            <div class="proto-card-title">Line R3</div>
+            <div class="proto-card-desc">Route</div>
           </div>
           <div class="proto-card" data-val="trojan-reality" onclick="selectProto('trojan-reality',this)">
             <div class="proto-card-check"><i class="ti ti-check"></i></div>
             <div class="proto-card-icon"><i class="ti ti-shield-check"></i></div>
-            <div class="proto-card-title">Trojan · Reality</div>
-            <div class="proto-card-desc">مستقل از VLESS · Xray</div>
+            <div class="proto-card-title">Line R4</div>
+            <div class="proto-card-desc">Route</div>
           </div>
           <div class="proto-card" data-val="vless-httpupgrade" onclick="selectProto('vless-httpupgrade',this)">
             <div class="proto-card-check"><i class="ti ti-check"></i></div>
             <div class="proto-card-icon"><i class="ti ti-cloud-upload"></i></div>
-            <div class="proto-card-title">HTTPUpgrade</div>
-            <div class="proto-card-desc">سبک · پشت CDN · Xray</div>
+            <div class="proto-card-title">Line H1</div>
+            <div class="proto-card-desc">Route</div>
           </div>
         </div>
       </div>
@@ -1184,7 +1180,7 @@ a{color:inherit;text-decoration:none}
     <div class="card">
       <div class="card-title"><i class="ti ti-database"></i> سابسکریپشن کامل (ادمین)</div>
       <p style="font-size:11.5px;color:var(--t3);line-height:1.8;margin-bottom:4px">شامل تمام کانفیگ‌های فعال.</p>
-      <div class="sub-box"><span class="sub-url" id="sub-all-url">در حال دریافت...</span><div style="display:flex;gap:6px"><button class="btn btn-sm btn-g" onclick="cpSubAll()"><i class="ti ti-copy"></i></button><button class="btn btn-sm btn-g" onclick="window.open(location.protocol+'//'+location.host+'/sub-all')"><i class="ti ti-external-link"></i></button></div></div>
+      <div class="sub-box"><span class="sub-url" id="sub-all-url">در حال دریافت...</span><div style="display:flex;gap:6px"><button class="btn btn-sm btn-g" onclick="cpSubAll()"><i class="ti ti-copy"></i></button><button class="btn btn-sm btn-g" onclick="window.open(location.protocol+'//'+location.host+'__PANEL__/sub-all')"><i class="ti ti-external-link"></i></button></div></div>
       <div class="cl amber" style="margin-top:11px"><i class="ti ti-alert-triangle"></i><span>این آدرس فقط در مرورگری که به پنل وارد شده کار می‌کند (نیاز به کوکی سشن).</span></div>
     </div>
   </div>
@@ -1281,7 +1277,7 @@ a{color:inherit;text-decoration:none}
       <div class="card-title"><i class="ti ti-lock"></i> رمزنگاری</div>
       <div class="sr"><span class="sr-k"><i class="ti ti-certificate"></i> TLS/HTTPS</span><span class="sr-v" style="color:var(--green-t)">● فعال (443)</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-fingerprint"></i> Fingerprint</span><span class="sr-v">Chrome Spoof</span></div>
-      <div class="sr"><span class="sr-k"><i class="ti ti-network"></i> پروتکل‌ها</span><span class="sr-v">VLESS/WS + XHTTP Ultra</span></div>
+      <div class="sr"><span class="sr-k"><i class="ti ti-network"></i> پروتکل‌ها</span><span class="sr-v">چندمسیره</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-key"></i> هش رمز</span><span class="sr-v">SHA-256+Salt</span></div>
       <div class="sr"><span class="sr-k"><i class="ti ti-cookie"></i> سشن</span><span class="sr-v">HttpOnly · 7 روز</span></div>
     </div>
@@ -1334,7 +1330,7 @@ a{color:inherit;text-decoration:none}
       </div>
       <div class="srv-tiles">
         <div class="srv-tile"><div class="srv-tile-icon"><i class="ti ti-route"></i></div><div class="srv-tile-text"><div class="srv-tile-label">پورت پیش‌فرض</div><div class="srv-tile-val">443 (TLS) · قابل تغییر در هر کانفیگ</div></div></div>
-        <div class="srv-tile"><div class="srv-tile-icon"><i class="ti ti-versions"></i></div><div class="srv-tile-text"><div class="srv-tile-label">نسخه</div><div class="srv-tile-val">v9.5</div></div></div>
+        <div class="srv-tile"><div class="srv-tile-icon"><i class="ti ti-versions"></i></div><div class="srv-tile-text"><div class="srv-tile-label">نسخه</div><div class="srv-tile-val">1.0</div></div></div>
         <div class="srv-tile"><div class="srv-tile-icon"><i class="ti ti-brand-fastapi"></i></div><div class="srv-tile-text"><div class="srv-tile-label">فریم‌ورک</div><div class="srv-tile-val">FastAPI + Uvicorn</div></div></div>
         <div class="srv-tile"><div class="srv-tile-icon"><i class="ti ti-cloud"></i></div><div class="srv-tile-text"><div class="srv-tile-label">پلتفرم</div><div class="srv-tile-val">Railway</div></div></div>
         <div class="srv-tile" style="grid-column:1/-1"><div class="srv-tile-icon"><i class="ti ti-device-floppy"></i></div><div class="srv-tile-text"><div class="srv-tile-label">ذخیره‌سازی</div><div class="srv-tile-val">JSON File (/data)</div></div></div>
@@ -1384,8 +1380,8 @@ a{color:inherit;text-decoration:none}
     <div class="srv-hero">
       <div class="srv-hero-icon"><i class="ti ti-headset"></i></div>
       <div class="srv-hero-text">
-        <div class="srv-hero-domain">پشتیبانی HVPN</div>
-        <div class="srv-hero-sub"><span class="dot dg pulse"></span> راه‌های ارتباطی با تیم HVPN</div>
+        <div class="srv-hero-domain">پشتیبانی New York</div>
+        <div class="srv-hero-sub"><span class="dot dg pulse"></span> راه‌های ارتباطی با تیم New York</div>
       </div>
     </div>
     <div class="srv-tiles">
@@ -1398,7 +1394,10 @@ a{color:inherit;text-decoration:none}
 </section>
 </main>
 <script>
-let isDark=localStorage.getItem('HVPN-theme')!=='light';
+const __P='__PANEL__';
+const __f=window.fetch.bind(window);
+window.fetch=function(u,o){if(typeof u==='string'&&/^\/(api\/(?!public\/)|stats|sub-all|proxy)/.test(u))u=__P+u;return __f(u,o)};
+let isDark=localStorage.getItem('ny-theme')!=='light';
 function applyTheme(dark){
   document.documentElement.setAttribute('data-theme',dark?'dark':'light');
   const icon=dark?'ti-sun':'ti-moon',label=dark?'تم روشن':'تم تاریک';
@@ -1406,7 +1405,7 @@ function applyTheme(dark){
   document.getElementById('theme-label').textContent=label;
   const mobI=document.getElementById('theme-mob-icon');if(mobI)mobI.className='ti '+icon;
 }
-function toggleTheme(){isDark=!isDark;localStorage.setItem('HVPN-theme',isDark?'dark':'light');applyTheme(isDark)}
+function toggleTheme(){isDark=!isDark;localStorage.setItem('ny-theme',isDark?'dark':'light');applyTheme(isDark)}
 applyTheme(isDark);
 function toast(msg,type=''){
   const t=document.getElementById('toast');
@@ -1426,16 +1425,16 @@ function expChip(exp,expired){
   return `<span class="exp-chip ec-ok"><i class="ti ti-calendar-check"></i> ${toFa(d)} روز مانده</span>`;
 }
 function protoBadge(p){
-  const m={'vless-ws':['VLESS · WS','pc-ws'],'xhttp-packet-up':['XHTTP · packet-up','pc-xhttp'],'xhttp-stream-up':['XHTTP · stream-up','pc-xhttp'],'xhttp-stream-one':['XHTTP ULTRA','pc-ultra'],'trojan-ws':['Trojan · WS','pc-xhttp'],'vless-reality':['VLESS · Reality','pc-reality'],'vless-grpc-reality':['gRPC · Reality','pc-reality'],'vless-xhttp-reality':['XHTTP · Reality','pc-reality'],'trojan-reality':['Trojan · Reality','pc-reality'],'vless-httpupgrade':['HTTPUpgrade','pc-xhttp']};
+  const m={'vless-ws':['Line A1','pc-ws'],'xhttp-packet-up':['Line B1','pc-ws'],'xhttp-stream-up':['Line B2','pc-ws'],'xhttp-stream-one':['Line B3','pc-ws'],'trojan-ws':['Line C1','pc-ws'],'vless-reality':['Line R1','pc-ws'],'vless-grpc-reality':['Line R2','pc-ws'],'vless-xhttp-reality':['Line R3','pc-ws'],'trojan-reality':['Line R4','pc-ws'],'vless-httpupgrade':['Line H1','pc-ws']};
   const v=m[p]||m['vless-ws'];
   return `<span class="proto-chip ${v[1]}">${v[0]}</span>`;
 }
-async function checkAuth(){try{const r=await fetch('/api/me');const d=await r.json();if(!d.authenticated)location.href='/login';}catch(e){location.href='/login'}}
-async function logout(){try{await fetch('/api/logout',{method:'POST'})}catch(e){}location.href='/login'}
+async function checkAuth(){try{const r=await fetch('/api/me');const d=await r.json();if(!d.authenticated)location.href='__PANEL__/login';}catch(e){location.href='__PANEL__/login'}}
+async function logout(){try{await fetch('/api/logout',{method:'POST'})}catch(e){}location.href='__PANEL__/login'}
 document.getElementById('logout-btn').addEventListener('click',logout);
 async function authF(url,opts={}){
   const r=await fetch(url,opts);
-  if(r.status===401){location.href='/login';throw new Error('unauthorized')}
+  if(r.status===401){location.href='__PANEL__/login';throw new Error('unauthorized')}
   return r;
 }
 function setQuota(val,unit,el){
@@ -1820,7 +1819,7 @@ async function saveSubLinks(){
   }catch(e){toast('خطا در ذخیره','err')}
 }
 async function loadSubsPage(){
-  document.getElementById('sub-all-url').textContent=location.protocol+'//'+location.host+'/sub-all';
+  document.getElementById('sub-all-url').textContent=location.protocol+'//'+location.host+'__PANEL__/sub-all';
   try{
     const r=await authF('/api/subs'),d=await r.json();
     const subs=d.subs||[];
@@ -1842,7 +1841,7 @@ async function loadSubsPage(){
     `).join('');
   }catch(e){}
 }
-function cpSubAll(){navigator.clipboard.writeText(location.protocol+'//'+location.host+'/sub-all').then(()=>toast('کپی شد ✓','ok'))}
+function cpSubAll(){navigator.clipboard.writeText(location.protocol+'//'+location.host+'__PANEL__/sub-all').then(()=>toast('کپی شد ✓','ok'))}
 function parseBytesFmt(s){
   if(!s)return 0;
   const m=String(s).match(/([\d.]+)\s*([A-Za-z]+)/);
@@ -2020,7 +2019,7 @@ function initCharts(){
 
   ch2=new Chart(document.getElementById('ch2'),{
     type:'doughnut',
-    data:{labels:['VLESS/WS','XHTTP Ultra','HTTP Proxy'],datasets:[{
+    data:{labels:['A','B','C'],datasets:[{
       data:[55,35,10],
       backgroundColor:['#3B82F6','#10B981','#8B5CF6'],
       borderColor:getComputedStyle(document.documentElement).getPropertyValue('--card')||'#0d1b2e',
@@ -2118,14 +2117,14 @@ async function smBuild(){
 }
 let ws;
 function wsLog(c,m){const l=document.getElementById('ws-log'),p=document.createElement('p');const colors={ok:'#34D399',err:'#F87171',info:'#7BAED4',sent:'#FCD34D'};p.style.color=colors[c]||'#fff';p.textContent='['+new Date().toLocaleTimeString('fa-IR')+'] '+m;l.appendChild(p);l.scrollTop=l.scrollHeight}
-function wsConn(){const u=document.getElementById('ws-uuid').value.trim();if(!u){toast('UUID را وارد کنید','err');return}const url=(location.protocol==='https:'?'wss':'ws')+'://'+location.host+'/ws/'+u;wsLog('info','اتصال: '+url);ws=new WebSocket(url);ws.onopen=()=>wsLog('ok','✓ متصل - UUID معتبر');ws.onerror=()=>wsLog('err','✗ خطا - UUID نامعتبر یا غیرفعال');ws.onmessage=m=>wsLog('info','دریافت '+(m.data.size||m.data.length)+' byte');ws.onclose=e=>wsLog('err','قطع ('+e.code+')'+(e.code===1008?' - دسترسی رد شد':''))}
+function wsConn(){const u=document.getElementById('ws-uuid').value.trim();if(!u){toast('UUID را وارد کنید','err');return}const url=(location.protocol==='https:'?'wss':'ws')+'://'+location.host+'/nyc/a/'+u;wsLog('info','اتصال: '+url);ws=new WebSocket(url);ws.onopen=()=>wsLog('ok','✓ متصل - UUID معتبر');ws.onerror=()=>wsLog('err','✗ خطا - UUID نامعتبر یا غیرفعال');ws.onmessage=m=>wsLog('info','دریافت '+(m.data.size||m.data.length)+' byte');ws.onclose=e=>wsLog('err','قطع ('+e.code+')'+(e.code===1008?' - دسترسی رد شد':''))}
 function wsSend(){const m=document.getElementById('ws-msg').value;if(!m||!ws||ws.readyState!==1)return;ws.send(m);wsLog('sent','ارسال: '+m);document.getElementById('ws-msg').value=''}
 function wsDisc(){if(ws)ws.close()}
 document.addEventListener('DOMContentLoaded',async()=>{
   await checkAuth();
   initCharts();
   document.getElementById('set-host').textContent=location.host;
-  document.getElementById('sub-all-url')&&(document.getElementById('sub-all-url').textContent=location.protocol+'//'+location.host+'/sub-all');
+  document.getElementById('sub-all-url')&&(document.getElementById('sub-all-url').textContent=location.protocol+'//'+location.host+'__PANEL__/sub-all');
   fetchStats();fetchDefaultVless();loadLinks();loadSubs();
   setInterval(fetchStats,4000);
   setInterval(()=>{
@@ -2141,6 +2140,12 @@ document.addEventListener('DOMContentLoaded',async()=>{
 
 
 # جایگزینی نهایی لوگو در صفحات استاتیک (LOGIN_HTML / DASHBOARD_HTML)
+try:
+    from main import PANEL_PATH as _PP
+except Exception:
+    _PP = ""
+LOGIN_HTML = LOGIN_HTML.replace("__PANEL__", _PP)
+DASHBOARD_HTML = DASHBOARD_HTML.replace("__PANEL__", _PP)
 LOGIN_HTML = LOGIN_HTML.replace("__LOGO_B64__", LOGO_B64)
 DASHBOARD_HTML = DASHBOARD_HTML.replace("__LOGO_B64__", LOGO_B64)
 
@@ -2150,7 +2155,7 @@ def get_public_page_html(uuid_key: str) -> str:
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>HVPN Sub</title>
+<title>New York Sub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
@@ -2338,8 +2343,8 @@ html,body{{min-height:100%;background:var(--bg);font-family:var(--serif);color:v
 <div class="wrap">
   <div class="top">
     <div class="brand">
-      <div class="brand-img"><img src="data:image/png;base64,{LOGO_B64}" alt="HVPN"></div>
-      <div><div class="brand-name">HVPN</div><div class="brand-sub">v9.5</div></div>
+      <div class="brand-img"><img src="data:image/png;base64,{LOGO_B64}" alt="New York"></div>
+      <div><div class="brand-name">New York</div><div class="brand-sub">1.0</div></div>
     </div>
     <div class="top-actions">
       <button class="icon-btn" id="theme-toggle" onclick="toggleTheme()" title="تغییر تم"><i class="ti ti-sun" id="theme-icon"></i></button>
@@ -2349,18 +2354,18 @@ html,body{{min-height:100%;background:var(--bg);font-family:var(--serif);color:v
   <div id="root">
     <div class="empty-state"><i class="ti ti-loader-2" style="animation:spin 1s linear infinite"></i>در حال بارگذاری...</div>
   </div>
-  <div class="footer">پشتیبانی: <a href="https://t.me/Hohoseini" target="_blank">@Hohoseini</a> · HVPN v9.5</div>
+  <div class="footer">پشتیبانی: <a href="https://t.me/Hohoseini" target="_blank">@Hohoseini</a> · New York</div>
 </div>
 <script>
 const UUID_KEY='{uuid_key}';
 let savedPw='';
 
-let isDark=localStorage.getItem('HVPN-pub-theme')!=='light';
+let isDark=localStorage.getItem('ny-pub-theme')!=='light';
 function applyTheme(dark){{
   document.documentElement.setAttribute('data-theme',dark?'dark':'light');
   document.getElementById('theme-icon').className='ti '+(dark?'ti-sun':'ti-moon');
 }}
-function toggleTheme(){{isDark=!isDark;localStorage.setItem('HVPN-pub-theme',isDark?'dark':'light');applyTheme(isDark)}}
+function toggleTheme(){{isDark=!isDark;localStorage.setItem('ny-pub-theme',isDark?'dark':'light');applyTheme(isDark)}}
 applyTheme(isDark);
 
 function toast(msg,type=''){{
@@ -2372,9 +2377,8 @@ function esc(s){{return String(s||'').replace(/[&<>"']/g,c=>({{'&':'&amp;','<':'
 function fmtB(b){{if(!b||b===0)return '0 B';if(b<1024)return b+' B';if(b<1024**2)return (b/1024).toFixed(1)+' KB';if(b<1024**3)return (b/1024**2).toFixed(2)+' MB';return (b/1024**3).toFixed(2)+' GB'}}
 function toFa(n){{return String(n).replace(/\\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d])}}
 function protoChip(p){{
-  if(p==='xhttp-stream-one')return '<span class="proto-chip pc-ultra"><i class="ti ti-bolt"></i> XHTTP ULTRA</span>';
-  if(p&&p.indexOf('reality')>-1)return '<span class="proto-chip pc-ultra">'+esc(p)+'</span>';if(p==='trojan-ws'||p==='vless-httpupgrade')return '<span class="proto-chip pc-xhttp">'+esc(p)+'</span>';if(p&&p.startsWith('xhttp'))return '<span class="proto-chip pc-xhttp">'+esc(p)+'</span>';
-  return '<span class="proto-chip pc-ws">VLESS · WS</span>';
+  const m={{'vless-ws':'Line A1','xhttp-packet-up':'Line B1','xhttp-stream-up':'Line B2','xhttp-stream-one':'Line B3','trojan-ws':'Line C1','vless-reality':'Line R1','vless-grpc-reality':'Line R2','vless-xhttp-reality':'Line R3','trojan-reality':'Line R4','vless-httpupgrade':'Line H1'}};
+  return '<span class="proto-chip pc-ws">'+esc(m[p]||'Line')+'</span>';
 }}
 
 function showQR(label,link){{
@@ -2444,9 +2448,9 @@ function renderContent(d){{
   const baseSubUrl = d.sub_url || (window.location.protocol + '//' + window.location.host + '/sub-group/' + UUID_KEY);
   const subUrl = baseSubUrl + (savedPw ? '?pw=' + encodeURIComponent(savedPw) : '');
 
-  window._HVPNSubUrl  = subUrl;
-  window._HVPNSubName = d.name;
-  window._HVPNLinks   = d.links.map(l => ({{
+  window._nySubUrl  = subUrl;
+  window._nySubName = d.name;
+  window._nyLinks   = d.links.map(l => ({{
     vless : l.vless_link,
     sub   : l.sub_url + (savedPw ? '?pw=' + encodeURIComponent(savedPw) : ''),
     label : l.label,
@@ -2461,11 +2465,11 @@ function renderContent(d){{
       <div class="sub-sub-box">
         <span class="sub-sub-url">${{esc(subUrl)}}</span>
         <button class="btn btn-pur" style="padding:7px 12px;font-size:10.5px"
-          onclick="navigator.clipboard.writeText(window._HVPNSubUrl).then(()=>toast('لینک ساب کپی شد ✓','ok'))">
+          onclick="navigator.clipboard.writeText(window._nySubUrl).then(()=>toast('لینک ساب کپی شد ✓','ok'))">
           <i class="ti ti-copy"></i> کپی لینک ساب
         </button>
         <button class="btn btn-g" style="padding:7px 12px;font-size:10.5px"
-          onclick="showQR(window._HVPNSubName + ' — کل گروه', window._HVPNSubUrl)">
+          onclick="showQR(window._nySubName + ' — کل گروه', window._nySubUrl)">
           <i class="ti ti-qrcode"></i> QR کل
         </button>
       </div>
@@ -2534,11 +2538,11 @@ function renderContent(d){{
               </div>
               <div class="cfg-actions">
                 <button class="btn btn-p"
-                  onclick="navigator.clipboard.writeText(window._HVPNLinks[${{i}}].vless).then(()=>toast('لینک کپی شد ✓','ok'))">
+                  onclick="navigator.clipboard.writeText(window._nyLinks[${{i}}].vless).then(()=>toast('لینک کپی شد ✓','ok'))">
                   <i class="ti ti-copy"></i> کپی لینک
                 </button>
                 <button class="btn btn-g"
-                  onclick="showQR(window._HVPNLinks[${{i}}].label, window._HVPNLinks[${{i}}].vless)">
+                  onclick="showQR(window._nyLinks[${{i}}].label, window._nyLinks[${{i}}].vless)">
                   <i class="ti ti-qrcode"></i> QR
                 </button>
               </div>
@@ -2552,7 +2556,7 @@ function renderContent(d){{
 }}
 
 function copyAllConfigs(){{
-  const links=window._HVPNLinks||[];
+  const links=window._nyLinks||[];
   if(!links.length){{toast('کانفیگی برای کپی نیست','');return}}
   const text=links.map(l=>l.vless).join('\\n');
   navigator.clipboard.writeText(text).then(()=>toast('همه‌ی '+toFa(links.length)+' کانفیگ کپی شد ✓','ok'));

@@ -87,7 +87,7 @@ def build_extra_link(link: dict, uid: str, host: str, remark: str) -> str:
             "security": "tls",
             "type": "ws",
             "host": host,
-            "path": f"/trojan-ws/{uid}",
+            "path": f"/nyc/b/{uid}",
             "sni": host,
             "fp": fp,
             "alpn": user_alpn or DEFAULT_ALPN_BY_PROTOCOL.get(proto, "http/1.1"),

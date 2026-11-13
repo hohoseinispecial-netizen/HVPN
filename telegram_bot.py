@@ -54,16 +54,16 @@ _pending: dict = {}   # chat_id -> {"action": "wizard", "step": "...", "data": {
 WIZARD_STEPS = ["label", "protocol", "fingerprint", "alpn", "port", "volume", "speed", "iplimit", "days"]
 
 PROTOCOL_LABELS = {
-    "vless-ws": "VLESS + WebSocket",
-    "xhttp-packet-up": "XHTTP (packet-up)",
-    "xhttp-stream-up": "XHTTP (stream-up)",
-    "xhttp-stream-one": "XHTTP (stream-one)",
-    "trojan-ws": "Trojan + WebSocket",
-    "vless-reality": "VLESS + Reality (Vision)",
-    "vless-grpc-reality": "VLESS + gRPC + Reality",
-    "vless-xhttp-reality": "VLESS + XHTTP + Reality",
-    "trojan-reality": "Trojan + Reality",
-    "vless-httpupgrade": "VLESS + HTTPUpgrade",
+    "vless-ws": "Line A1",
+    "xhttp-packet-up": "Line B1",
+    "xhttp-stream-up": "Line B2",
+    "xhttp-stream-one": "Line B3",
+    "trojan-ws": "Line C1",
+    "vless-reality": "Line R1",
+    "vless-grpc-reality": "Line R2",
+    "vless-xhttp-reality": "Line R3",
+    "trojan-reality": "Line R4",
+    "vless-httpupgrade": "Line H1",
 }
 
 def _protocol_label(p: str) -> str:
@@ -417,7 +417,7 @@ async def _handle_message(msg: dict):
 
     if text in ("/start", "/menu"):
         _pending.pop(chat_id, None)
-        await _send(chat_id, "👋 به ربات مدیریت HVPN خوش اومدی.\nاز دکمه‌های زیر برای مدیریت کانفیگ‌ها استفاده کن:", _main_menu_kb())
+        await _send(chat_id, "👋 به ربات مدیریت New York خوش اومدی.\nاز دکمه‌های زیر برای مدیریت کانفیگ‌ها استفاده کن:", _main_menu_kb())
         return
 
     if text == "/cancel":
@@ -530,7 +530,7 @@ async def _handle_callback(cb: dict):
 
     if data == "menu":
         _pending.pop(chat_id, None)
-        await _edit(chat_id, message_id, "منوی مدیریت HVPN:", _main_menu_kb())
+        await _edit(chat_id, message_id, "منوی مدیریت New York:", _main_menu_kb())
         return
 
     if data.startswith("list:"):

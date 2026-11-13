@@ -1,3 +1,8 @@
+import sys
+if __name__ == "__main__":
+    # `from main import ...` in other modules must reuse this module (no second copy)
+    sys.modules["main"] = sys.modules["__main__"]
+
 import asyncio
 import json
 import os
@@ -23,7 +28,7 @@ logger = logging.getLogger("HVPN")
 
 IRAN_TZ = ZoneInfo("Asia/Tehran")
 
-app = FastAPI(title="HVPN", docs_url=None, redoc_url=None)
+app = FastAPI(title="New York", docs_url=None, redoc_url=None, openapi_url=None)
 
 # ── Persistence ───────────────────────────────────────────────────────────────
 DATA_DIR = Path(os.environ.get("DATA_DIR", "/data"))
@@ -62,8 +67,8 @@ CONFIG = {
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=[],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -161,13 +166,17 @@ def log_activity(kind: str, message: str, level: str = "info"):
     })
 
 # ── Auth ──────────────────────────────────────────────────────────────────────
-SESSION_COOKIE = "HVPN_session"
+SESSION_COOKIE = "ny_sid"
 SESSION_TTL = 60 * 60 * 24 * 365
 
 def hash_password(pw: str) -> str:
     return hashlib.sha256(f"{pw}{CONFIG['secret']}".encode()).hexdigest()
 
-AUTH = {"password_hash": hash_password(os.environ.get("ADMIN_PASSWORD", "HVPN123"))}
+_ADMIN_PW = os.environ.get("ADMIN_PASSWORD") or ""
+if not _ADMIN_PW:
+    _ADMIN_PW = secrets.token_urlsafe(9)
+    logger.warning(f"ADMIN_PASSWORD is not set; temporary password for this run: {_ADMIN_PW}")
+AUTH = {"password_hash": hash_password(_ADMIN_PW)}
 SESSIONS: dict = {}
 SESSIONS_LOCK = asyncio.Lock()
 
@@ -201,6 +210,14 @@ async def require_auth(request: Request):
         raise HTTPException(status_code=401, detail="unauthorized")
     return token
 
+# ── Hidden panel path + cover site (cover.py) ────────────────────────────────
+_pp = (os.environ.get("PANEL_PATH") or "").strip().strip("/")
+if not _pp:
+    _pp = "p" + hashlib.sha256(("panel:" + CONFIG["secret"]).encode()).hexdigest()[:12]
+PANEL_PATH = "/" + _pp
+from cover import install_cover
+install_cover(app, PANEL_PATH)
+
 # ── Startup / Shutdown ────────────────────────────────────────────────────────
 @app.on_event("startup")
 async def startup():
@@ -218,7 +235,7 @@ async def startup():
     except Exception as e:
         logger.warning(f"Xray manager failed to start: {e}")
     log_activity("system", "سرور راه‌اندازی شد", "ok")
-    logger.info(f"HVPN v9.5 started on port {CONFIG['port']}")
+    logger.info(f"started on port {CONFIG['port']} | panel: {PANEL_PATH}/")
 
 @app.on_event("shutdown")
 async def shutdown():
@@ -256,7 +273,7 @@ def now_ir() -> datetime:
 def generate_vless_link(
     uuid: str,
     host: str,
-    remark: str = "HVPN",
+    remark: str = "NY",
     protocol: str = DEFAULT_PROTOCOL,
     fingerprint: str | None = None,
     alpn: str | None = None,
@@ -273,7 +290,7 @@ def generate_vless_link(
         port_val = DEFAULT_PORT
 
     if protocol == "vless-ws":
-        path = f"/ws/{uuid}"
+        path = f"/nyc/a/{uuid}"
         params = {
             "encryption": "none",
             "security": "tls",
@@ -287,7 +304,7 @@ def generate_vless_link(
     else:
         # xhttp-packet-up / xhttp-stream-up / xhttp-stream-one
         mode = protocol.replace("xhttp-", "")  # packet-up | stream-up | stream-one
-        path = f"/xhttp-siz10/{mode}/{uuid}"
+        path = f"/nyc/x/{mode}/{uuid}"
         params = {
             "encryption": "none",
             "security": "tls",
@@ -307,10 +324,10 @@ def vless_link_for_link(link: dict, uid: str, host: str) -> str:
     proto = link.get("protocol", DEFAULT_PROTOCOL)
     if proto == "trojan-ws" or proto in XRAY_PROTOCOLS:
         from extra_protocols import build_extra_link
-        return build_extra_link(link, uid, host, f"HVPN-{link.get('label','')}")
+        return build_extra_link(link, uid, host, f"NY-{link.get('label','')}")
     return generate_vless_link(
         uid, host,
-        remark=f"HVPN-{link.get('label','')}",
+        remark=f"NY-{link.get('label','')}",
         protocol=proto,
         fingerprint=link.get("fingerprint"),
         alpn=link.get("alpn"),
@@ -433,11 +450,12 @@ async def ensure_default_link():
 # ── Basic endpoints ───────────────────────────────────────────────────────────
 @app.get("/")
 async def root():
-    return {"service": "HVPN", "version": "9.5", "status": "active", "channel": "https://t.me/Hohoseini"}
+    from cover import LANDING_HTML
+    return HTMLResponse(LANDING_HTML)
 
 @app.get("/health")
 async def health():
-    return {"status": "ok", "connections": len(connections), "uptime": uptime()}
+    return Response("ok", media_type="text/plain")
 
 # ── Subscription (single link) ────────────────────────────────────────────────
 @app.get("/sub/{uuid}")
@@ -1034,7 +1052,7 @@ from relay_vless import (
     websocket_tunnel,
 )
 
-app.add_api_websocket_route("/ws/{uuid}", websocket_tunnel)
+app.add_api_websocket_route("/nyc/a/{uuid}", websocket_tunnel)
 
 # ══════════════════════════════════════════════════════════════════════════════
 # XHTTP — Siz10a XHTTP Ultra (ترابرد جدید، جدا از VLESS/WS، هر ۳ مد)
@@ -1046,7 +1064,7 @@ app.include_router(xhttp_router)
 # Trojan-WS (پایتونی) + بخش هوشمند (/api/smart/*). Reality/gRPC/HTTPUpgrade → xray_core.py
 # ══════════════════════════════════════════════════════════════════════════════
 from extra_protocols import trojan_tunnel
-app.add_api_websocket_route("/trojan-ws/{uuid}", trojan_tunnel)
+app.add_api_websocket_route("/nyc/b/{uuid}", trojan_tunnel)
 from smart import router as smart_router
 app.include_router(smart_router)
 
@@ -1060,7 +1078,7 @@ _HOP = {"connection","keep-alive","proxy-authenticate","proxy-authorization",
         "te","trailers","transfer-encoding","upgrade","content-encoding","content-length"}
 
 @app.api_route("/proxy/{target_url:path}", methods=["GET","POST","PUT","DELETE","PATCH","HEAD","OPTIONS"])
-async def http_proxy(target_url: str, request: Request):
+async def http_proxy(target_url: str, request: Request, _=Depends(require_auth)):
     if not target_url.startswith("http"):
         target_url = "https://" + target_url
     try:
@@ -1150,13 +1168,13 @@ from pages import LOGIN_HTML, DASHBOARD_HTML
 @app.get("/login", response_class=HTMLResponse)
 async def login_page(request: Request):
     if await is_valid_session(request.cookies.get(SESSION_COOKIE)):
-        return RedirectResponse(url="/dashboard")
+        return RedirectResponse(url=f"{PANEL_PATH}/dashboard")
     return HTMLResponse(content=LOGIN_HTML)
 
 @app.get("/dashboard", response_class=HTMLResponse)
 async def dashboard(request: Request):
     if not await is_valid_session(request.cookies.get(SESSION_COOKIE)):
-        return RedirectResponse(url="/login")
+        return RedirectResponse(url=f"{PANEL_PATH}/login")
     await ensure_default_link()
     return HTMLResponse(content=DASHBOARD_HTML)
 
@@ -1165,4 +1183,4 @@ async def test_ws_redirect():
     return HTMLResponse(content="<script>location.href='/dashboard'</script>")
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=CONFIG["port"], log_level="info", workers=1)
+    uvicorn.run(app, host="0.0.0.0", port=CONFIG["port"], log_level="info", workers=1, server_header=False)

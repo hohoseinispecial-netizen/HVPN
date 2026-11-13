@@ -44,9 +44,9 @@ API_PORT = int(os.environ.get("XRAY_API_PORT", "10085"))
 BASE_PORT = int(os.environ.get("XRAY_BASE_PORT", "24430"))
 POLL_INTERVAL = 5
 
-GRPC_SERVICE = "hvpn-grpc"
-XHTTP_PATH = "/hvpn-xr"
-HU_PATH = "/hvpn-hu"
+GRPC_SERVICE = "nyc-svc"
+XHTTP_PATH = "/nyc/u"
+HU_PATH = "/nyc/h"
 
 # هر پروتکل = یک inbound مجزا روی پورت مخصوص خودش
 SPECS = {
